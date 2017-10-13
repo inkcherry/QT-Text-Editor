@@ -26,9 +26,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
+    major_highlighter.cpp \
+    titlelist.cpp \
+    qhtextedit.cpp
 
 HEADERS += \
         mainwindow.h \
+    major_highlighter.h \
+    titlelist.h \
+    qhtextedit.h
 
 
 FORMS += \

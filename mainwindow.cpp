@@ -1,37 +1,78 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
       ui->setupUi(this);
+      /* InitEditor();  */              // 代码高亮初始化
+       QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));  //utf-8编码
+
+       ui->titletabWidget->setStyleSheet("QTabBar::tab { background:#CCCCCC;"
+                                         "color:#555555;height: 15px;"
+                                         " width:80px; padding: 0px;}"
+                                    "QTabBar::tab:selected { background: #FFFFFF;color:#000000 } ");
+       titlelist = new TitleList(ui->titletabWidget,CurFile,CurEdit);
+//       titlelist->addTilte();
+
+
+
+
       IsUnTitle=true;
       CurFile=tr("未命名.txt");
+
       setWindowTitle(CurFile);
+      findDlg = new QDialog(this);
+      findDlg->setWindowTitle(tr("查找"));
+      findLineEdit = new QLineEdit(findDlg);
+      QPushButton *btn_n= new QPushButton(tr("下一个"), findDlg);
+      QPushButton *btn_p= new QPushButton(tr("上一个"),findDlg);
+
+      QVBoxLayout *layout= new QVBoxLayout(findDlg);
+      layout->addWidget(findLineEdit);
+      layout->addWidget(btn_n);
+      layout->addWidget(btn_p);
+      connect(btn_n, SIGNAL(clicked()), this, SLOT(showFindText_N()));
+      connect(btn_p, SIGNAL(clicked()), this, SLOT(showFindText_P())); //默认向前查找
+
 }
+void MainWindow::InitEditor(QTextEdit *newtextedit)
+{
+//调用方法，新建对象并传递document
+    QFont font;
+    font.setFamily("Courier");
+    font.setFixedPitch(true);
+    font.setPointSize(10);
+    newtextedit->setFont(font);
+    major_highlighter *highter = new major_highlighter(newtextedit);  //这里指针考虑怎么释放
+}
+
 bool MainWindow::OpenFile(const QString &fname)
 {
+
     QFile file(fname);
     file.open(QFile::ReadOnly|QFile::Text);
     QTextStream in(&file);
-    ui->textEdit->setPlainText(in.readAll());
-    CurFile = QFileInfo(fname).canonicalFilePath();
+    CurEdit=titlelist->addTitle(fname);
+    CurEdit->setPlainText(in.readAll());
+    CurFile =QFileInfo(fname).canonicalFilePath();
+
     IsUnTitle=false;
     setWindowTitle(CurFile);
     return true;
+
+//    return false;
+
 }
 
 void MainWindow::NewFile()
 {
-   if(NeedSave())   //如果我们要新建文档，就要提醒是否保存当前文档，取消返回F
-    {
+
        CurFile=tr("未命名.txt");
-        IsUnTitle=true;
+       IsUnTitle=true;
        setWindowTitle(CurFile);
-       ui->textEdit->clear();
-       ui->textEdit->setVisible(true);
-    }
+       CurEdit= titlelist->addTitle(CurFile);   //保存下CurFile;
+
 }
 bool MainWindow::Save()
 {
@@ -41,9 +82,8 @@ bool MainWindow::Save()
              return IsUnTitle=false;
     }
     else
-    {
-        return SaveFile(CurFile);}//save保存修改
-    }
+    { return SaveFile(CurFile);}//save保存修改
+}
 bool MainWindow::SaveAs()
 {
      QString fileName = QFileDialog::getSaveFileName(this,
@@ -56,7 +96,7 @@ bool MainWindow::SaveFile(const QString &fname)
     QFile file(fname);
     file.open(QFile::WriteOnly | QFile::Text);   //打开文件
     QTextStream out(&file);
-    out << ui->textEdit->toPlainText();  //写入文件
+    out <<CurEdit->toPlainText();  //写入文件
        CurFile = QFileInfo(fname).canonicalFilePath(); //获得文件路径
        setWindowTitle(CurFile);       //重置标题
        file.close();
@@ -66,9 +106,9 @@ bool MainWindow::SaveFile(const QString &fname)
 
 bool MainWindow::NeedSave()  //保存提示
 {
-    if(ui->textEdit->document()->isModified())  //改变了文本内容
-    {
-        QMessageBox warnbox;
+
+    if(CurEdit->document()->isModified())  //当前编辑器改变了文本内容
+        {QMessageBox warnbox;
         warnbox.setWindowTitle(tr("warning"));
         warnbox.setIcon(QMessageBox::Warning);
         warnbox.setText(CurFile+tr("是否需要保存"));
@@ -93,15 +133,11 @@ MainWindow::~MainWindow()
 }
 
 
-//void MainWindow::on_pushButton_clicked()
-//{
-//    QDialog *dlg=new QDialog(this);
-//    dlg->show();
-//}
 
 void MainWindow::on_action_New_triggered()
 {
     NewFile();
+
 }
 
 void MainWindow::on_action_Save_triggered()
@@ -114,6 +150,26 @@ void MainWindow::on_action_SaveAs_triggered()
     SaveAs();
 }
 
+void MainWindow::showFindText_N()
+{
+    QString findstr = findLineEdit->text();
+    if (!CurEdit->find(findstr,QTextDocument::FindBackward))  //第二个参数为枚举，向后查找
+    {
+       QMessageBox::warning(this, tr("查找"),
+                tr("找不到%1").arg(findstr));
+    }
+}
+void MainWindow::showFindText_P()
+{   QMessageBox j;
+    j.setWindowTitle("333");
+    j.exec();
+    QString findstr = findLineEdit->text();
+    if (!CurEdit->find(findstr))  //第二个参数为枚举，向后查找
+    {
+       QMessageBox::warning(this, tr("查找"),
+                tr("找不到%1").arg(findstr));
+    }
+}
 void MainWindow::on_action_Open_triggered()
 {
     if(NeedSave())
@@ -125,4 +181,42 @@ void MainWindow::on_action_Open_triggered()
 
         }
     }
+}
+
+void MainWindow::on_action_Find_triggered()
+{
+   findDlg->show();//查找框
+}
+
+void MainWindow::on_action_Cut_triggered()
+{
+   CurEdit->cut();
+}
+
+void MainWindow::on_action_Undo_triggered()
+{
+    CurEdit->undo();
+}
+
+void MainWindow::on_action_Copy_triggered()
+{
+    CurEdit->copy();
+}
+
+void MainWindow::on_action_Paste_triggered()
+{
+    CurEdit->paste();
+}
+
+
+
+void MainWindow::on_actiontest_triggered()
+{
+    QString f("ff");
+    titlelist->addTitle(f);
+}
+
+void MainWindow::on_titletabWidget_tabBarClicked(int index)
+{
+    titlelist->UpdateCurInfo(index); //点击更新当前文件
 }

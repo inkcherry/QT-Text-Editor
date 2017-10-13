@@ -31,16 +31,29 @@
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="7">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
       <property name="spacing">
        <number>0</number>
       </property>
       <item>
-       <widget class="QTextEdit" name="textEdit">
-        <property name="cursor" stdset="0">
-         <cursorShape>IBeamCursor</cursorShape>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QTabWidget" name="titletabWidget">
+          <property name="currentIndex">
+           <number>-1</number>
+          </property>
+          <property name="tabsClosable">
+           <bool>true</bool>
+          </property>
+          <property name="movable">
+           <bool>true</bool>
+          </property>
+          <property name="tabBarAutoHide">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -67,6 +80,7 @@
     <addaction name="action_SaveAs"/>
     <addaction name="separator"/>
     <addaction name="action_Exit"/>
+    <addaction name="actiontest"/>
    </widget>
    <widget class="QMenu" name="menujhkjhk">
     <property name="title">
@@ -210,6 +224,11 @@
    </property>
    <property name="text">
     <string>查找(&amp;F)</string>
+   </property>
+  </action>
+  <action name="actiontest">
+   <property name="text">
+    <string>test</string>
    </property>
   </action>
  </widget>
