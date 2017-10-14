@@ -1,6 +1,6 @@
 #include "qhtextedit.h"
 
-Qhtextedit::Qhtextedit()
+Qhtextedit::Qhtextedit():QTextEdit()
 {
 
 }

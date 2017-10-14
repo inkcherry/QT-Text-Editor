@@ -345,4 +345,8 @@
         <file>icon/zoom-original.png</file>
         <file>icon/zoom-out.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>icon/background.jpg</file>
+        <file>icon/wintitle.png</file>
+    </qresource>
 </RCC>

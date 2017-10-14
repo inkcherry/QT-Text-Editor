@@ -62,9 +62,12 @@ private slots:
 
     void on_titletabWidget_tabBarClicked(int index);
 
+    void on_titletabWidget_tabCloseRequested(int index);
+
 private:
     TitleList *titlelist;
-    QTextEdit *CurEdit;
+    Qhtextedit *CurEdit;
+
     QLineEdit *findLineEdit;
     QDialog   *findDlg;     //Find聊天窗口
     bool IsUnTitle;       //文件是否命名

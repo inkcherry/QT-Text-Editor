@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="res.qrc">
+    <normaloff>:/icon/wintitle.png</normaloff>:/icon/wintitle.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
@@ -80,7 +84,6 @@
     <addaction name="action_SaveAs"/>
     <addaction name="separator"/>
     <addaction name="action_Exit"/>
-    <addaction name="actiontest"/>
    </widget>
    <widget class="QMenu" name="menujhkjhk">
     <property name="title">

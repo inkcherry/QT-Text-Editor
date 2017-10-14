@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include<QMessageBox>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -12,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
                                          "color:#555555;height: 15px;"
                                          " width:80px; padding: 0px;}"
                                     "QTabBar::tab:selected { background: #FFFFFF;color:#000000 } ");
-       titlelist = new TitleList(ui->titletabWidget,CurFile,CurEdit);
+       titlelist = new TitleList(ui->titletabWidget,&CurFile,CurEdit);
 //       titlelist->addTilte();
 
 
@@ -44,7 +45,8 @@ void MainWindow::InitEditor(QTextEdit *newtextedit)
     font.setFixedPitch(true);
     font.setPointSize(10);
     newtextedit->setFont(font);
-    major_highlighter *highter = new major_highlighter(newtextedit);  //这里指针考虑怎么释放
+//    Qhtextedit *hnewtextedit = newtextedit;
+//    major_highlighter *highter = new major_highlighter(hnewtextedit);  //这里指针考虑怎么释放
 }
 
 bool MainWindow::OpenFile(const QString &fname)
@@ -106,7 +108,12 @@ bool MainWindow::SaveFile(const QString &fname)
 
 bool MainWindow::NeedSave()  //保存提示
 {
-
+//QDialog m;
+//m.//QDialog m;
+    //m.exec();exec();
+QMessageBox kk;
+kk.setText(CurEdit->toPlainText());
+kk.exec();
     if(CurEdit->document()->isModified())  //当前编辑器改变了文本内容
         {QMessageBox warnbox;
         warnbox.setWindowTitle(tr("warning"));
@@ -117,14 +124,14 @@ bool MainWindow::NeedSave()  //保存提示
 
          QPushButton *CButton=warnbox.addButton(tr("取消"),QMessageBox::RejectRole);
         warnbox.exec();
-         if(warnbox.clickedButton()==YButton)
+         if(warnbox.clickedButton()==YButton)         //yes
          {
           return  Save();
          }
-         else if(warnbox.clickedButton()==CButton)
+         else if(warnbox.clickedButton()==CButton)   //cancle
              return false;
     }
-    return true;             //文档没有更改返回true
+    return true;             //no  文档不保存关闭返回true
 }
 
 MainWindow::~MainWindow()
@@ -160,9 +167,9 @@ void MainWindow::showFindText_N()
     }
 }
 void MainWindow::showFindText_P()
-{   QMessageBox j;
+{  /* QMessageBox j;
     j.setWindowTitle("333");
-    j.exec();
+    j.exec();*/
     QString findstr = findLineEdit->text();
     if (!CurEdit->find(findstr))  //第二个参数为枚举，向后查找
     {
@@ -219,4 +226,23 @@ void MainWindow::on_actiontest_triggered()
 void MainWindow::on_titletabWidget_tabBarClicked(int index)
 {
     titlelist->UpdateCurInfo(index); //点击更新当前文件
+    CurEdit->setText("hhhh");
+//    QMessageBox m;
+//    m.setText(CurFile);
+//    m.exec();
+    setWindowTitle(CurFile);
+
+}
+
+void MainWindow::on_titletabWidget_tabCloseRequested(int index)
+{
+    if(NeedSave())
+   {    /*ui->titletabWidget->setCurrentIndex(index+1);*/
+//        index++;
+  //      titlelist->UpdateCurInfo(2);                  //因为下面两个bug，我猜测可能是由于CurEdit内存Curedit没有指向崩掉的，在关闭之前更新活动页 也是不行
+        ui->titletabWidget->removeTab(index);
+//ui->titletabWidget->widget(index)->~QWidget();                       //这样析构tab的widget确实能释放掉子控件编辑器edit控件内存，但是程序崩了。
+//      ui->titletabWidget->widget(index)->findChild<Qhtextedit *>()->~Qhtextedit();  //直接析构编辑器的内存也崩了）：
+
+   }
 }

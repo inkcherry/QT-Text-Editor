@@ -1,6 +1,8 @@
 #include "titlelist.h"
 #include<QDialog>
- TitleList:: TitleList(QTabWidget *titletabwidget_,QString &CurFile_,QTextEdit *CurEdit_)
+#include<QMessageBox>
+#include "qhtextedit.h"
+ TitleList:: TitleList(QTabWidget *titletabwidget_,QString *CurFile_,Qhtextedit *CurEdit_)
 {
 titletabwidget=titletabwidget_;
 CurFile=CurFile_;
@@ -9,21 +11,25 @@ CurEdit=CurEdit_;
 void TitleList::UpdateCurInfo(int &index)
 {
 
-    CurFile=titletabwidget->tabText(index);
-    CurEdit=titletabwidget->widget(index)->findChild<QTextEdit *>();   //找到对应tag的textedit控件
+    *CurFile=titletabwidget->tabText(index);
+//    QMessageBox m;
+//    m.setText(CurFile);
+//    m.exec();
+    CurEdit=titletabwidget->widget(index)->findChild<Qhtextedit*>();   //找到对应tag的textedit控件
+
+//    CurEdit->setText("fdsaf");
 }
 
-QTextEdit* TitleList::addTitle(const QString &fname)
+Qhtextedit* TitleList::addTitle(const QString &fname)
 {
-
-QTextEdit *textedit=new QTextEdit();
+Qhtextedit *htextedit =new Qhtextedit();
 QWidget *widget = new QWidget();
 QVBoxLayout *vlayout = new QVBoxLayout();
-vlayout->addWidget(textedit);
+vlayout->addWidget(htextedit);
 widget->setLayout(vlayout);
 titletabwidget->addTab(widget,fname);   //QTtab消失后孩子控件自动释放，major_highlighter需要手写释放
 //connect(this,signal(tabBarClicked(id)),this,UpdateCurInfo());
-major_highlighter *highter = new major_highlighter(textedit);
-return textedit;
+major_highlighter *highter = new major_highlighter(htextedit);
+return htextedit;
 }
 

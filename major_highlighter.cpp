@@ -1,8 +1,9 @@
 #include "major_highlighter.h"
-
-major_highlighter::major_highlighter(QTextEdit *parent)    //构造函数，主要是对词语的高亮
-    : QSyntaxHighlighter(parent->document())
+//#include "qhtextedit.h"
+major_highlighter::major_highlighter(Qhtextedit *parent)    //构造函数，主要是对词语的高亮
+    : QSyntaxHighlighter(parent==0?0:parent->document())
 {
+     if(parent!=0)parent->P_m=this;  //用于析构 这里如果不写和上边构造形参如果不判断parent==0 程序就会crash
     HighlightingRule rule;                            //高亮规则
 
     keywordFormat.setForeground(Qt::darkBlue);    //设定关键词的高亮样式
