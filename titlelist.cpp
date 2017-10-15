@@ -2,7 +2,7 @@
 #include<QDialog>
 #include<QMessageBox>
 #include "qhtextedit.h"
- TitleList:: TitleList(QTabWidget *titletabwidget_,QString *CurFile_,Qhtextedit *CurEdit_)
+ TitleList:: TitleList(QTabWidget *titletabwidget_,QString *CurFile_,Qhtextedit **CurEdit_)
 {
 titletabwidget=titletabwidget_;
 CurFile=CurFile_;
@@ -15,9 +15,7 @@ void TitleList::UpdateCurInfo(int &index)
 //    QMessageBox m;
 //    m.setText(CurFile);
 //    m.exec();
-    CurEdit=titletabwidget->widget(index)->findChild<Qhtextedit*>();   //找到对应tag的textedit控件
-
-//    CurEdit->setText("fdsaf");
+    *CurEdit=titletabwidget->widget(index)->findChild<Qhtextedit*>();   //找到对应tag的textedit控件
 }
 
 Qhtextedit* TitleList::addTitle(const QString &fname)

@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
                                          "color:#555555;height: 15px;"
                                          " width:80px; padding: 0px;}"
                                     "QTabBar::tab:selected { background: #FFFFFF;color:#000000 } ");
-       titlelist = new TitleList(ui->titletabWidget,&CurFile,CurEdit);
+       titlelist = new TitleList(ui->titletabWidget,&CurFile,&CurEdit);
 //       titlelist->addTilte();
 
 
@@ -111,9 +111,9 @@ bool MainWindow::NeedSave()  //保存提示
 //QDialog m;
 //m.//QDialog m;
     //m.exec();exec();
-QMessageBox kk;
-kk.setText(CurEdit->toPlainText());
-kk.exec();
+//QMessageBox kk;
+//kk.setText(CurEdit->toPlainText());
+//kk.exec();
     if(CurEdit->document()->isModified())  //当前编辑器改变了文本内容
         {QMessageBox warnbox;
         warnbox.setWindowTitle(tr("warning"));
@@ -226,11 +226,11 @@ void MainWindow::on_actiontest_triggered()
 void MainWindow::on_titletabWidget_tabBarClicked(int index)
 {
     titlelist->UpdateCurInfo(index); //点击更新当前文件
-    CurEdit->setText("hhhh");
+//    CurEdit->setText("hhhh");
 //    QMessageBox m;
 //    m.setText(CurFile);
 //    m.exec();
-    setWindowTitle(CurFile);
+//    setWindowTitle(CurFile);
 
 }
 
